@@ -40,10 +40,10 @@ Lorem sed risus ultricies tristique nulla aliquet.
 Elementum nibh tellus molestie nunc non blandit massa.""");
     }
 
-    @FXML
-    protected void onHelloButtonClick() {
-        welcomeText.setText("Welcome to the Address Book Application!");
-    }
+    //@FXML
+    //protected void onHelloButtonClick() {
+    //    welcomeText.setText("Welcome to the Address Book Application!");
+    //}
 
     @FXML
     protected void onAgreeCheckBoxClick() {
@@ -57,5 +57,11 @@ Elementum nibh tellus molestie nunc non blandit massa.""");
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("main-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), HelloApplication.WIDTH, HelloApplication.HEIGHT);
         stage.setScene(scene);
+    }
+
+    @FXML
+    protected void onCancelButtonClick() {
+        Stage stage = (Stage) nextButton.getScene().getWindow();
+        stage.close();
     }
 }

@@ -5,6 +5,9 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.VBox;
+
+import java.util.List;
 
 public class MainController {
     @FXML
@@ -19,6 +22,8 @@ public class MainController {
     private TextField emailTextField;
     @FXML
     private TextField phoneTextField;
+    @FXML
+    private VBox contactContainer;
 
     public MainController() {
         contactDAO = new MockContactDAO();
@@ -79,13 +84,25 @@ public class MainController {
      */
     private void syncContacts() {
         contactsListView.getItems().clear();
-        contactsListView.getItems().addAll(contactDAO.getAllContacts());
+        List<Contact> contacts = contactDAO.getAllContacts();
+        boolean hasContact = !contacts.isEmpty();
+        if (hasContact) {
+            contactsListView.getItems().addAll(contacts);
+        }
+        // Show / hide based on whether there are contacts
+        contactContainer.setVisible(hasContact);
     }
 
     @FXML
     public void initialize() {
         contactsListView.setCellFactory(this::renderCell);
         syncContacts();
+        // Select the first contact and display its information
+        contactsListView.getSelectionModel().selectFirst();
+        Contact firstContact = contactsListView.getSelectionModel().getSelectedItem();
+        if (firstContact != null) {
+            selectContact(firstContact);
+        }
     }
 
     @FXML
@@ -111,4 +128,22 @@ public class MainController {
             syncContacts();
         }
     }
+
+    @FXML
+    private void onAdd() {
+        // Default values for a new contact
+        final String DEFAULT_FIRST_NAME = "New";
+        final String DEFAULT_LAST_NAME = "Contact";
+        final String DEFAULT_EMAIL = "";
+        final String DEFAULT_PHONE = "";
+        Contact newContact = new Contact(DEFAULT_FIRST_NAME, DEFAULT_LAST_NAME, DEFAULT_EMAIL, DEFAULT_PHONE);
+        // Add the new contact to the database
+        contactDAO.addContact(newContact);
+        syncContacts();
+        // Select the new contact in the list view
+        // and focus the first name text field
+        selectContact(newContact);
+        firstNameTextField.requestFocus();
+    }
+
 }
