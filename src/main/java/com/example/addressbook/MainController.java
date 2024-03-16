@@ -102,6 +102,13 @@ public class MainController {
         }
     }
 
-
-
+    @FXML
+    private void onDelete() {
+        // Get the selected contact from the list view
+        Contact selectedContact = contactsListView.getSelectionModel().getSelectedItem();
+        if (selectedContact != null) {
+            contactDAO.deleteContact(selectedContact);
+            syncContacts();
+        }
+    }
 }
