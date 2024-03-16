@@ -1,2 +1,4 @@
-package com.example.addressbook;public class MainController {
+package com.example.addressbook;
+
+public class MainController {
 }
