@@ -83,10 +83,14 @@ public class MainController {
      * Synchronizes the contacts list view with the contacts in the database.
      */
     private void syncContacts() {
+        Contact currentContact = contactsListView.getSelectionModel().getSelectedItem();
         contactsListView.getItems().clear();
         List<Contact> contacts = contactDAO.getAllContacts();
         boolean hasContact = !contacts.isEmpty();
         if (hasContact) {
+            Contact nextContact = contacts.contains(currentContact) ? currentContact : contacts.get(0);
+            contactsListView.getSelectionModel().select(nextContact);
+            selectContact(nextContact);
             contactsListView.getItems().addAll(contacts);
         }
         // Show / hide based on whether there are contacts
