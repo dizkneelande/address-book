@@ -27,7 +27,7 @@ public class MainController {
 
     public MainController() {
         contactDAO = new MockContactDAO();
-        contactDAO.addContact(new Contact("Jerry", "Doe", "jerrydoe@example.com", "0423423426"));
+        contactDAO.addContact(new Contact("Jerry", "Smith", "jerrydoe@example.com", "0423423426"));
     }
     /**
      * Programmatically selects a contact in the list view and
