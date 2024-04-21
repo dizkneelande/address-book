@@ -1,42 +1,17 @@
 package com.example.addressbook.model;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class SqliteContactDAO implements IContactDAO {
-    // A Connection object (ideally named connection) to handle the database connection.
     private Connection connection;
 
-    // A constructor that initializes the connection object using the SqliteConnection.getInstance() method. We will also call on a createTable() method to create the contacts table if it does not already exist.
     public SqliteContactDAO() {
         connection = SqliteConnection.getInstance();
         createTable();
-        // Used for testing, to be removed later
-        //insertSampleData();
     }
 
-    // private void insertSampleData() {
-    //     try {
-    //         // Clear before inserting
-    //         Statement clearStatement = connection.createStatement();
-    //         String clearQuery = "DELETE FROM contacts";
-    //         clearStatement.execute(clearQuery);
-    //         Statement insertStatement = connection.createStatement();
-    //         String insertQuery = "INSERT INTO contacts (firstName, lastName, phone, email) VALUES "
-    //                 + "('John', 'Doe', '0423423423', 'johndoe@example.com'),"
-    //                 + "('Jane', 'Doe', '0423423424', 'janedoe@example.com'),"
-    //                 + "('Jay', 'Doe', '0423423425', 'jaydoe@example.com')";
-    //         insertStatement.execute(insertQuery);
-    //     } catch (Exception e) {
-    //         e.printStackTrace();
-    //     }
-    // }
-//
-    // A createTable() method that executes a SQL query to create the contacts table if it does not already exist.
     private void createTable() {
         // Create table if not exists
         try {
@@ -72,8 +47,6 @@ public class SqliteContactDAO implements IContactDAO {
             e.printStackTrace();
         }
     }
-
-
     @Override
     public void updateContact(Contact contact) {
         try {
@@ -120,7 +93,6 @@ public class SqliteContactDAO implements IContactDAO {
         }
         return null;
     }
-
 
     @Override
     public List<Contact> getAllContacts() {

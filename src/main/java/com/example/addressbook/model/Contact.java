@@ -54,7 +54,7 @@ public class Contact {
         this.phone = phone;
     }
 
-    public String getContactSummary() {
-        return firstName + " " + lastName + " (" + email + ")";
+    public String getFullName() {
+        return firstName + " " + lastName;
     }
 }

@@ -5,22 +5,17 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 
 public class HelloController {
     @FXML
-    private Label welcomeText;
-    @FXML
     private TextArea termsAndConditions;
     @FXML
     private CheckBox agreeCheckBox;
     @FXML
     private Button nextButton;
-
     @FXML
     public void initialize() {
         termsAndConditions.setText("""
@@ -40,11 +35,6 @@ Sapien pellentesque habitant morbi tristique.
 Lorem sed risus ultricies tristique nulla aliquet.
 Elementum nibh tellus molestie nunc non blandit massa.""");
     }
-
-    //@FXML
-    //protected void onHelloButtonClick() {
-    //    welcomeText.setText("Welcome to the Address Book Application!");
-    //}
 
     @FXML
     protected void onAgreeCheckBoxClick() {

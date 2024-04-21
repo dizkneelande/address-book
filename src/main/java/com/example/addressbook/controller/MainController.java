@@ -1,13 +1,8 @@
 package com.example.addressbook.controller;
 
-import com.example.addressbook.model.Contact;
-import com.example.addressbook.model.IContactDAO;
-import com.example.addressbook.model.MockContactDAO;
-import com.example.addressbook.model.SqliteContactDAO;
+import com.example.addressbook.model.*;
 import javafx.fxml.FXML;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 
@@ -16,8 +11,7 @@ import java.util.List;
 public class MainController {
     @FXML
     private ListView<Contact> contactsListView;
-    private IContactDAO contactDAO;
-
+    private ContactManager contactManager;
     @FXML
     private TextField firstNameTextField;
     @FXML
@@ -28,13 +22,12 @@ public class MainController {
     private TextField phoneTextField;
     @FXML
     private VBox contactContainer;
-
+    @FXML
+    private TextField searchTextField;
     public MainController() {
-        //contactDAO = new MockContactDAO();
-        //contactDAO.addContact(new Contact("Jerry", "Smith", "jerrydoe@example.com", "0423423426"));
-
-        contactDAO = new SqliteContactDAO();
+        contactManager = new ContactManager(new SqliteContactDAO());
     }
+
     /**
      * Programmatically selects a contact in the list view and
      * updates the text fields with the contact's information.
@@ -75,11 +68,11 @@ public class MainController {
             protected void updateItem(Contact contact, boolean empty) {
                 super.updateItem(contact, empty);
                 // If the cell is empty, set the text to null, otherwise set it to the contact's full name
-                if (empty || contact == null || contact.getContactSummary() == null) {
+                if (empty || contact == null || contact.getFullName() == null) {
                     setText(null);
                     super.setOnMouseClicked(this::onContactSelected);
                 } else {
-                    setText(contact.getContactSummary());
+                    setText(contact.getFullName());
                 }
             }
         };
@@ -89,14 +82,13 @@ public class MainController {
      * Synchronizes the contacts list view with the contacts in the database.
      */
     private void syncContacts() {
-        Contact currentContact = contactsListView.getSelectionModel().getSelectedItem();
         contactsListView.getItems().clear();
-        List<Contact> contacts = contactDAO.getAllContacts();
+        // --- New code to search for contacts ---
+        String query = searchTextField.getText();
+        List<Contact> contacts = contactManager.searchContacts(query);
+        // --- End of new code ---
         boolean hasContact = !contacts.isEmpty();
         if (hasContact) {
-            Contact nextContact = contacts.contains(currentContact) ? currentContact : contacts.get(0);
-            contactsListView.getSelectionModel().select(nextContact);
-            selectContact(nextContact);
             contactsListView.getItems().addAll(contacts);
         }
         // Show / hide based on whether there are contacts
@@ -113,6 +105,7 @@ public class MainController {
         if (firstContact != null) {
             selectContact(firstContact);
         }
+        searchTextField.textProperty().addListener((observable, oldValue, newValue) -> syncContacts());
     }
 
     @FXML
@@ -124,7 +117,7 @@ public class MainController {
             selectedContact.setLastName(lastNameTextField.getText());
             selectedContact.setEmail(emailTextField.getText());
             selectedContact.setPhone(phoneTextField.getText());
-            contactDAO.updateContact(selectedContact);
+            ContactManager.updateContact(selectedContact);
             syncContacts();
         }
     }
@@ -134,7 +127,7 @@ public class MainController {
         // Get the selected contact from the list view
         Contact selectedContact = contactsListView.getSelectionModel().getSelectedItem();
         if (selectedContact != null) {
-            contactDAO.deleteContact(selectedContact);
+            ContactManager.deleteContact(selectedContact);
             syncContacts();
         }
     }
@@ -148,7 +141,7 @@ public class MainController {
         final String DEFAULT_PHONE = "";
         Contact newContact = new Contact(DEFAULT_FIRST_NAME, DEFAULT_LAST_NAME, DEFAULT_EMAIL, DEFAULT_PHONE);
         // Add the new contact to the database
-        contactDAO.addContact(newContact);
+        ContactManager.addContact(newContact);
         syncContacts();
         // Select the new contact in the list view
         // and focus the first name text field
@@ -156,4 +149,14 @@ public class MainController {
         firstNameTextField.requestFocus();
     }
 
+    @FXML
+    private void onCancel() {
+        // Find the selected contact
+        Contact selectedContact = contactsListView.getSelectionModel().getSelectedItem();
+        if (selectedContact != null) {
+            // Since the contact hasn't been modified,
+            // we can just re-select it to refresh the text fields
+            selectContact(selectedContact);
+        }
+    }
 }
